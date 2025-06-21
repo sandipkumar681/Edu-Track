@@ -1,4 +1,5 @@
 import {
+  Alert,
   Pressable,
   StyleSheet,
   Text,
@@ -23,17 +24,25 @@ const HeaderRightIcon = () => {
     // console.log(examArray);
     // while (selectedIndexes.length !== 0) {
     // console.log(selectedIndexes[0]);
-    const newExamArray = examArray.filter(
-      (exam, index) => !selectedIndexes.includes(index)
+    Alert.alert(
+      "Confirm Deletion",
+      "Do you want to remove these entries? This can’t be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          onPress: () => {
+            const newExamArray = examArray.filter(
+              (exam, index) => !selectedIndexes.includes(index)
+            );
+            // console.log(newExamArray);
+            MMKV.setMap("examArray", newExamArray);
+            setSelectedIndexes([]);
+            setLongPressed(false);
+          },
+        },
+      ]
     );
-    // console.log(newExamArray);
-    MMKV.setMap("examArray", newExamArray);
-    setSelectedIndexes((prev) =>
-      // console.log(typeof prev, prev);
-      prev.slice(1)
-    );
-    // }
-    setLongPressed((prev) => !prev);
   };
 
   return (
@@ -68,4 +77,5 @@ export default HeaderRightIcon;
 const styles = StyleSheet.create({
   container: { flexDirection: "row", gap: 12 },
   iconPressable: { paddingHorizontal: 4 },
+  cancelButton: { color: "red" },
 });

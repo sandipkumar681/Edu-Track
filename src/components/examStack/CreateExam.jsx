@@ -150,7 +150,7 @@ const getStyles = (isDarkMode) =>
       marginBottom: 6,
     },
     input: {
-      backgroundColor: "grey",
+      backgroundColor: isDarkMode ? "grey" : "#F5F5F5",
       padding: 12,
       borderRadius: 8,
       fontSize: 16,

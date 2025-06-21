@@ -2,12 +2,12 @@ import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
 import React, { useEffect } from "react";
 import { MMKVLoader } from "react-native-mmkv-storage";
 import defaultImage from "../../images/aiImage.jpg";
+import CheckInternetStatus from "./CheckInternetStatus";
 
 const MMKV = new MMKVLoader().initialize();
 
 const AccountPage = () => {
   const isDarkMode = useColorScheme() === "dark";
-
   const styles = getStyles(isDarkMode);
   const name = MMKV.getString("name");
   const avatarUri = MMKV.getString("avatarUri");
@@ -19,11 +19,14 @@ const AccountPage = () => {
       </Text> */}
       <View style={styles.avatarAndNameContainer}>
         <Image
-          source={{ uri: avatarUri ? avatarUri : defaultImage }}
+          source={avatarUri ? { uri: avatarUri } : defaultImage}
           style={styles.avatar}
         />
-        <Text style={[styles.name]}>Hi, {name}👋</Text>
+        <Text style={[styles.name, styles.textColorOfThisPage]}>
+          Hi, {name}👋
+        </Text>
       </View>
+      <CheckInternetStatus />
     </View>
   );
 };
@@ -38,8 +41,7 @@ const getStyles = (isDarkMode) =>
       flex: 1,
       padding: 4,
       paddingTop: 20,
-      // justifyContent: "center",
-      // alignItems: "center",
+      justifyContent: "space-around",
     },
     whiteBg: { backgroundColor: "white" },
     darkBg: { backgroundColor: "black" },

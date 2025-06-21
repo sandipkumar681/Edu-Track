@@ -61,6 +61,17 @@ const ExamDetails = () => {
 
   return (
     <View style={[styles.backgroundColorOfPage, styles.container]}>
+      <View style={styles.progressBarContainer}>
+        <Progress.Bar
+          progress={progressBarValue}
+          borderRadius={10}
+          width={width - 15}
+          height={20}
+        />
+        <Text style={[styles.progressBarText, styles.textColorOfThisPage]}>
+          {Math.round(progressBarValue * 100)} %
+        </Text>
+      </View>
       <View>
         {!exam.subjects.length ? (
           <Text style={[styles.textColorOfThisPage, styles.noSubjectsText]}>
@@ -85,13 +96,6 @@ const ExamDetails = () => {
           ))
         )}
       </View>
-      <View style={styles.progressBarContainer}>
-        <Progress.Bar
-          progress={progressBarValue}
-          // borderWidth={0}
-          width={width - 15}
-        />
-      </View>
     </View>
   );
 };
@@ -104,8 +108,9 @@ const getStyles = (isDarkMode) =>
       flex: 1,
       paddingVertical: 4,
       paddingHorizontal: 6,
-      justifyContent: "space-between",
+      // justifyContent: "space-between",
     },
+    progressBarText: { position: "absolute", fontWeight: "bold", fontSize: 16 },
     backgroundColorOfPage: { backgroundColor: isDarkMode ? "black" : "white" },
     textColorOfThisPage: { color: isDarkMode ? "white" : "black" },
     noSubjectsText: {
@@ -130,5 +135,5 @@ const getStyles = (isDarkMode) =>
       backgroundColor: "#4CAF50",
       borderColor: "#4CAF50",
     },
-    progressBarContainer: { alignItems: "center" },
+    progressBarContainer: { alignItems: "center", justifyContent: "center" },
   });
