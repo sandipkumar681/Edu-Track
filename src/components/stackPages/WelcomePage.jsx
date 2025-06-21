@@ -10,20 +10,12 @@ import {
 import aiImage from "../../images/aiImage.jpg";
 import { useEffect, useState } from "react";
 import { MMKVLoader } from "react-native-mmkv-storage";
+import { Exams } from "../../constants";
 
 const MMKV = new MMKVLoader().initialize();
 
 const WelcomePage = ({ navigation }) => {
-  const [mockExamTypeArray, setMockExamTypeArray] = useState([
-    { id: 1, name: "UPSC", selected: false },
-    { id: 2, name: "SSC", selected: false },
-    { id: 3, name: "NDA", selected: false },
-    { id: 4, name: "Railway", selected: false },
-    { id: 5, name: "Banks", selected: false },
-    { id: 6, name: "NEET", selected: false },
-    { id: 7, name: "JEE", selected: false },
-    { id: 8, name: "MCA", selected: false },
-  ]);
+  const [mockExamArray, setMockExamArray] = useState(Exams);
 
   const [doesAnyExamItemSelected, setDoesAnyExamItemSelected] = useState(false);
   const [name, setName] = useState("");
@@ -34,12 +26,12 @@ const WelcomePage = ({ navigation }) => {
   useEffect(() => {
     const checkIfAnyExamItemSelected = () => {
       setDoesAnyExamItemSelected(
-        mockExamTypeArray.some((item) => item.selected === true)
+        mockExamArray.some((item) => item.selected === true)
       );
     };
 
     checkIfAnyExamItemSelected();
-  }, [mockExamTypeArray]);
+  }, [mockExamArray]);
 
   useEffect(() => {
     const getNameAndAvatarUri = async () => {
@@ -59,6 +51,16 @@ const WelcomePage = ({ navigation }) => {
       Alert.alert("Incorrect Input", "No exam selected.");
       return;
     }
+
+    const selectedExam = mockExamArray.filter((exam) => exam.selected);
+
+    MMKV.setMap(
+      "examArray",
+      selectedExam.map((exam) => ({
+        examName: exam.name,
+        subjects: exam.subjects,
+      }))
+    );
 
     navigation.replace("Edutrack");
   };
@@ -90,10 +92,10 @@ const WelcomePage = ({ navigation }) => {
           styles.middleText,
         ]}
       >
-        Choose Your Exam Type
+        Choose Your Exam
       </Text>
-      <View style={styles.examTypeContainer}>
-        {mockExamTypeArray.map((item) => (
+      <View style={styles.examContainer}>
+        {mockExamArray.map((item) => (
           <Pressable
             key={item.id}
             style={[
@@ -101,7 +103,7 @@ const WelcomePage = ({ navigation }) => {
               item.selected ? styles.examItemBackgroundColor : "",
             ]}
             onPress={() =>
-              setMockExamTypeArray((prev) =>
+              setMockExamArray((prev) =>
                 prev.map((obj) =>
                   obj.id === item.id ? { ...obj, selected: !obj.selected } : obj
                 )
@@ -165,10 +167,11 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     textAlign: "center",
   },
-  examTypeContainer: {
+  examContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-around",
+    marginTop: 25,
   },
   examItemBackgroundColor: { backgroundColor: "#f69b71" },
   examItemContainer: {
