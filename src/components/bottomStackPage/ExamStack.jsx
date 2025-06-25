@@ -4,6 +4,7 @@ import ExamPage from "../examStack/ExamPage";
 import CreateExam from "../examStack/CreateExam";
 import HeaderRightIcon from "../etc/HeaderRightIcon";
 import ExamDetails from "../examandsubjectpages/ExamDetails";
+import EditExam from "../examStack/EditExam";
 
 const ExamStack = () => {
   const Stack = createNativeStackNavigator();
@@ -24,7 +25,7 @@ const ExamStack = () => {
         },
         headerTintColor: isDarkMode ? "white" : "black",
         // headerTitleAlign: "center",
-        headerRight: HeaderRightIcon,
+        headerRight: () => <HeaderRightIcon />,
       }}
     >
       <Stack.Screen
@@ -40,6 +41,7 @@ const ExamStack = () => {
           title: route.params?.examName || "Exam Details",
         })}
       />
+      <Stack.Screen name="Edit Exam" component={EditExam} />
     </Stack.Navigator>
   );
 };

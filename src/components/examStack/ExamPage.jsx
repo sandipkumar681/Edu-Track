@@ -73,7 +73,6 @@ const ExamPage = ({ navigation }) => {
   );
 
   useEffect(() => {
-    console.log("SelectedIndex changed");
     getExamList();
   }, [selectedIndexes]);
 

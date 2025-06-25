@@ -10,15 +10,22 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import LongPressedContext from "../../context/LongPressContext";
 import { useContext } from "react";
 import { MMKVLoader } from "react-native-mmkv-storage";
+import { useNavigation } from "@react-navigation/native";
 
 const MMKV = new MMKVLoader().initialize();
 
 const HeaderRightIcon = () => {
   const isDarkMode = useColorScheme() === "dark";
+  const navigation = useNavigation();
 
   const { longPressed, selectedIndexes, setLongPressed, setSelectedIndexes } =
     useContext(LongPressedContext);
   // console.log(selectedIndexes);
+
+  const handleEdit = () => {
+    navigation.navigate("Edit Exam");
+  };
+
   const handleDelete = () => {
     const examArray = MMKV.getMap("examArray");
     // console.log(examArray);
@@ -48,7 +55,7 @@ const HeaderRightIcon = () => {
   return (
     <View style={styles.container}>
       {longPressed && (
-        <Pressable style={[styles.iconPressable]}>
+        <Pressable style={[styles.iconPressable]} onPress={handleEdit}>
           <Icon
             name="pencil"
             size={25}

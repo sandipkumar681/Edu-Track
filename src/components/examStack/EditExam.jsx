@@ -1,32 +1,47 @@
-import React, { useState } from "react";
 import {
-  View,
+  Pressable,
+  ScrollView,
+  StyleSheet,
   Text,
   TextInput,
-  StyleSheet,
-  Pressable,
-  Alert,
-  ScrollView,
   useColorScheme,
+  View,
 } from "react-native";
-import { MMKVLoader } from "react-native-mmkv-storage";
+import React, { useContext, useEffect, useState } from "react";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { MMKVLoader } from "react-native-mmkv-storage";
+import LongPressedContext from "../../context/LongPressContext";
 
 const MMKV = new MMKVLoader().initialize();
 
-const CreateExam = ({ navigation }) => {
+const EditExam = () => {
   const isDarkMode = useColorScheme() === "dark";
+  const styles = getStyles(isDarkMode);
   const [examName, setExamName] = useState("");
   const [subjects, setSubjects] = useState([]);
-  const styles = getStyles(isDarkMode);
+
+  const { selectedIndexes, setLongPressed, setSelectedIndexes } =
+    useContext(LongPressedContext);
+
+  const selectedExamIndex = selectedIndexes[0];
+
+  useEffect(() => {
+    const examArray = MMKV.getMap("examArray");
+    const selectedExam = examArray[selectedExamIndex];
+    // console.log(selectedExam);
+    setExamName(selectedExam.examName);
+    setSubjects(selectedExam.subjects);
+    setSelectedIndexes([]);
+    setLongPressed(false);
+  }, []);
 
   const handleAddSubject = () => {
-    setSubjects([...subjects, {}]);
+    setSubjects([...subjects, { subjectName: "", selected: false }]);
   };
 
   const handleChangeSubject = (text, index) => {
     const updated = [...subjects];
-    updated[index] = text;
+    updated[index] = { ...updated[index], subjectName: text };
     setSubjects(updated);
   };
 
@@ -42,40 +57,38 @@ const CreateExam = ({ navigation }) => {
       return;
     }
 
-    let alreadyExistingArray = MMKV.getMap("examArray");
+    // console.log(subjects);
 
-    const unqiueSubjectArray = new Set(
-      subjects.filter((subject) => subject.trim().length !== 0)
+    const filteredSubjectArray = subjects.filter(
+      (subject) => subject.subjectName.trim().length !== 0
     );
 
+    const seen = new Set();
+
+    const unqiueSubjectArray = filteredSubjectArray.filter((subject) => {
+      const name = subject.subjectName.trim().toLowerCase();
+
+      if (seen.has(name)) return false;
+
+      seen.add(name);
+      return true;
+    });
+
+    // console.log(unqiueSubjectArray);
     const newExam = [
       {
         examName,
-        subjects: new Array(...unqiueSubjectArray).map((subject) => ({
-          subjectName: subject,
-        })),
+        subjects: unqiueSubjectArray,
       },
     ];
+    // console.log(newExam);
 
-    if (alreadyExistingArray && alreadyExistingArray?.length !== 0) {
-      // console.log("If block executed");
-      if (
-        alreadyExistingArray.some(
-          (alreadyExistingExam) =>
-            alreadyExistingExam.examName === examName.trim()
-        )
-      ) {
-        Alert.alert("Duplicate", "Exam already exists!");
-        return;
-      }
-      // console.log("Yo");
-      MMKV.setMap("examArray", [...alreadyExistingArray, ...newExam]);
-      // console.log(MMKV.getMap("examArray"));
-    } else {
-      // console.log("else block executed");
-      MMKV.setMap("examArray", newExam);
-      // console.log(MMKV.getMap("examArray"));
-    }
+    let examArray = MMKV.getMap("examArray");
+    //   const newExamArray=examArray.map((subject)=>())
+    examArray[selectedExamIndex] = { ...newExam[0] };
+    // console.log(examArray);
+    MMKV.setMap("examArray", examArray);
+
     setExamName("");
     setSubjects([]);
     navigation.popToTop();
@@ -121,7 +134,7 @@ const CreateExam = ({ navigation }) => {
                 color: isDarkMode ? "white" : "black",
               },
             ]}
-            value={subject}
+            value={subject.subjectName}
             onChangeText={(text) => handleChangeSubject(text, index)}
             placeholderTextColor={styles.textColorOfThisPage.color}
           />
@@ -135,13 +148,13 @@ const CreateExam = ({ navigation }) => {
       ))}
 
       <Pressable style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Create Exam</Text>
+        <Text style={styles.buttonText}>Save Changes</Text>
       </Pressable>
     </ScrollView>
   );
 };
 
-export default CreateExam;
+export default EditExam;
 
 const getStyles = (isDarkMode) =>
   StyleSheet.create({
