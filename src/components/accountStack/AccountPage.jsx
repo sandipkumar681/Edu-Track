@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { MMKVLoader } from "react-native-mmkv-storage";
 import defaultImage from "../../images/aiImage.jpg";
 import CheckInternetStatus from "./CheckInternetStatus";
+import ImportAndExport from "./ImportAndExport";
 
 const MMKV = new MMKVLoader().initialize();
 
@@ -26,6 +27,7 @@ const AccountPage = () => {
           Hi, {name}👋
         </Text>
       </View>
+      <ImportAndExport />
       <CheckInternetStatus />
     </View>
   );

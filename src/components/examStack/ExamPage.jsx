@@ -38,9 +38,7 @@ const ExamPage = ({ navigation }) => {
       //   MMKV.getMap("examArray")
       // );
 
-      if (MMKV.getMap("examArray")) {
-        getExamList();
-      }
+      getExamList();
 
       // console.log("Exam Page", typeof examArray, examArray);
       // console.log(!Array.isArray(examArray));
@@ -71,7 +69,7 @@ const ExamPage = ({ navigation }) => {
         />
       )}
       <View style={[styles.showExamNameContainer]}>
-        {Array.isArray(examArray) && examArray?.length === 0 ? (
+        {!Array.isArray(examArray) || examArray?.length === 0 ? (
           <View style={[styles.blankArrayImageContainer]}>
             <Image
               source={blankArrayImage}
