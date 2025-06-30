@@ -7,14 +7,14 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { MMKVLoader } from "react-native-mmkv-storage";
 import LongPressedContext from "../../context/LongPressContext";
 
 const MMKV = new MMKVLoader().initialize();
 
-const EditExam = () => {
+const EditExam = ({ navigation }) => {
   const isDarkMode = useColorScheme() === "dark";
   const styles = getStyles(isDarkMode);
   const [examName, setExamName] = useState("");
@@ -23,12 +23,12 @@ const EditExam = () => {
   const { selectedIndexes, setLongPressed, setSelectedIndexes } =
     useContext(LongPressedContext);
 
-  const selectedExamIndex = selectedIndexes[0];
+  const selectedExamIndex = useRef(selectedIndexes[0]);
 
   useEffect(() => {
     const examArray = MMKV.getMap("examArray");
-    const selectedExam = examArray[selectedExamIndex];
-    // console.log(selectedExam);
+    const selectedExam = examArray[selectedExamIndex.current];
+    // console.log(selectedExamIndex.current);
     setExamName(selectedExam.examName);
     setSubjects(selectedExam.subjects);
     setSelectedIndexes([]);
@@ -65,7 +65,7 @@ const EditExam = () => {
 
     const seen = new Set();
 
-    const unqiueSubjectArray = filteredSubjectArray.filter((subject) => {
+    const uniqueSubjectArray = filteredSubjectArray.filter((subject) => {
       const name = subject.subjectName.trim().toLowerCase();
 
       if (seen.has(name)) return false;
@@ -74,20 +74,22 @@ const EditExam = () => {
       return true;
     });
 
-    // console.log(unqiueSubjectArray);
-    const newExam = [
-      {
-        examName,
-        subjects: unqiueSubjectArray,
-      },
-    ];
-    // console.log(newExam);
+    // console.log(uniqueSubjectArray);
+    const newExam = {
+      examName,
+      subjects: uniqueSubjectArray,
+    };
 
-    let examArray = MMKV.getMap("examArray");
-    //   const newExamArray=examArray.map((subject)=>())
-    examArray[selectedExamIndex] = { ...newExam[0] };
-    // console.log(examArray);
-    MMKV.setMap("examArray", examArray);
+    // console.log(newExam);
+    // console.log(selectedExamIndex.current);
+
+    let existingExamArray = MMKV.getMap("examArray");
+
+    existingExamArray[selectedExamIndex.current] = { ...newExam };
+    // console.log("exist", existingExamArray);
+    MMKV.setMap("examArray", existingExamArray);
+
+    // console.log("updated", MMKV.getMap("examArray"));
 
     setExamName("");
     setSubjects([]);
