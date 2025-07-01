@@ -28,7 +28,7 @@ const AccountPage = () => {
         </Text>
       </View>
       <ImportAndExport />
-      <CheckInternetStatus />
+      {/* <CheckInternetStatus /> */}
     </View>
   );
 };
@@ -43,12 +43,7 @@ const getStyles = (isDarkMode) =>
       flex: 1,
       padding: 4,
       paddingTop: 20,
-      justifyContent: "space-around",
     },
-    whiteBg: { backgroundColor: "white" },
-    darkBg: { backgroundColor: "black" },
-    whiteText: { color: "#f5eedd" },
-    darkText: { color: "black" },
     avatar: {
       height: 140,
       width: 140,
