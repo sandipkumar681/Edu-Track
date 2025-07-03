@@ -4,6 +4,7 @@ import { MMKVLoader } from "react-native-mmkv-storage";
 import defaultImage from "../../images/aiImage.jpg";
 import CheckInternetStatus from "./CheckInternetStatus";
 import ImportAndExport from "./ImportAndExport";
+import Auth0 from "./Auth0";
 
 const MMKV = new MMKVLoader().initialize();
 
@@ -12,7 +13,7 @@ const AccountPage = () => {
   const styles = getStyles(isDarkMode);
   const name = MMKV.getString("name");
   const avatarUri = MMKV.getString("avatarUri");
-  // console.log(avatarUri);
+
   return (
     <View style={[styles.container, styles.backgroundColorOfPage]}>
       {/* <Text style={[styles.whiteText, styles.textColorOfThisPage]}>
@@ -29,6 +30,7 @@ const AccountPage = () => {
       </View>
       <ImportAndExport />
       {/* <CheckInternetStatus /> */}
+      <Auth0 />
     </View>
   );
 };
